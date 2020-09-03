@@ -1,0 +1,51 @@
+#include "dht.h"
+#define dht_apin A0 // Analog Pin sensor is connected to
+ 
+dht DHT;
+ #include <LiquidCrystal.h>
+// include the LCD library
+LiquidCrystal lcd(13, 12, 11, 10, 9, 8);
+
+int potPin = A1; //input pin
+int soil=0;
+void setup(){
+ lcd.begin(16, 2);
+  Serial.begin(9600);
+  delay(500);//Delay to let system boot
+  Serial.println("DHT11 Humidity & temperature Sensor\n\n");
+  delay(1000);//Wait before accessing Sensor
+ lcd.setCursor(0, 0);
+ lcd.print("HUMIDITY-MOISTUR");
+ lcd.setCursor(0, 1);
+ lcd.print("   MEASUREMENT  ");
+ delay(2000);
+ lcd.clear();
+} 
+ 
+void loop()
+{
+DHT.read11(dht_apin);
+    int soil = analogRead(potPin);
+    delay(2000);
+soil = constrain(soil, 485, 1023);
+soil = map(soil, 485, 1023, 100, 0);  
+ lcd.setCursor(0, 0);
+ lcd.print("H:");
+ lcd.print(DHT.humidity);
+ lcd.print("%");
+ delay(100);
+ lcd.setCursor(9, 0);
+ lcd.print("T:");
+ lcd.print((int)DHT.temperature);
+  lcd.print(" ");
+  lcd.write(0xdf);
+ lcd.print("C");
+ delay(100);
+lcd.setCursor(0, 1);
+lcd.print("Moist: ");
+lcd.print(soil);
+//print the percent symbol at the end
+lcd.print("%");
+//wait 0.1 seconds
+delay(100);
+}
